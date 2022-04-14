@@ -14,6 +14,14 @@ npm init svelte
 npm init svelte my-app
 ```
 
+## Git
+
+```zsh
+git remote add origin git@github.com-adnansmajlovic:adnansmajlovic/pasians.git
+git branch -M main
+git push -u origin main
+```
+
 ## Developing
 
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
