@@ -33,16 +33,16 @@
   // ╚═════╝
 </script>
 
-<div class="m-0 font-mono text-green-900">
+<div class="card m-0 font-mono text-green-900">
   <div>
     {topLeftCorner}{doubleHorizontal}{doubleHorizontal}{doubleHorizontal}{doubleHorizontal}{doubleHorizontal}{doubleHorizontal}{doubleHorizontal}{topRightCorner}
   </div>
   <div>
     {doubleVertical}{letter.length > 1
       ? ''
-      : enSpace}{letter}{enSpace}{enSpace}{enSpace}{enSpace}<span
-      class={colors[color]}>{symbols[symbol]}</span
-    >{doubleVertical}
+      : enSpace}{letter}{enSpace}{enSpace}{enSpace}<span class={colors[color]}
+      >{symbols[symbol]}</span
+    >{enSpace}{doubleVertical}
   </div>
   {#if size === 'full'}
     {#each { length: 3 } as _, i}
