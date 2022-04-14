@@ -1,8 +1,14 @@
+<svelte:options accessors={true} />
+
 <script>
   export let symbol = 'spade';
   export let color = 'red';
   export let letter = 'A';
   export let size = 'top'; // full, top
+  export let x = 0;
+  export let y = 0;
+
+  export let isMarked = false;
 
   const colors = {
     red: 'text-red-800',
@@ -33,14 +39,17 @@
   // ╚═════╝
 </script>
 
-<div class="card m-0 font-mono text-green-900">
-  <div>
+<div
+  class="card m-0 font-mono {isMarked ? ' text-blue-900 ' : ' text-green-900 '}"
+>
+  <div class=" ">
     {topLeftCorner}{doubleHorizontal}{doubleHorizontal}{doubleHorizontal}{doubleHorizontal}{doubleHorizontal}{doubleHorizontal}{doubleHorizontal}{topRightCorner}
   </div>
   <div>
-    {doubleVertical}{letter.length > 1
-      ? ''
-      : enSpace}{letter}{enSpace}{enSpace}{enSpace}<span class={colors[color]}
+    {doubleVertical}{letter.length > 1 ? '' : enSpace}<span
+      class=" {isMarked ? ' bg-blue-800 text-yellow-100' : ' text-green-900 '}"
+      >{letter}</span
+    >{enSpace}{enSpace}{enSpace}<span class={colors[color]}
       >{symbols[symbol]}</span
     >{enSpace}{doubleVertical}
   </div>
