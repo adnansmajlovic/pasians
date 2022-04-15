@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
 
   import Card from '../lib/components/Card.svelte';
+  import { checkForTransfer } from '$lib/fns/checkForTransfer';
 
   let key;
   let keyCode;
@@ -29,6 +30,11 @@
   let bindDeckCards = {};
   let bindDeckCardsByXY = {};
 
+  let isTransferInProgress = false;
+  let isTransferOk = false;
+  let source;
+  let destination;
+
   /**
    * a.s. Movement
    *
@@ -39,9 +45,7 @@
     keyCode = event.keyCode;
 
     if (!selectedCard) {
-      // selectedCard = bindDeckCards['2-heart'];
       selectedCard = bindDeckCardsByXY['0-5'];
-      console.log({ selectedCard });
       console.log({ x: selectedCard.x, y: selectedCard.y });
       selectedCard.isMarked = true;
     }
@@ -87,8 +91,34 @@
           selectedCard = bindDeckCardsByXY[`${x + 1}-${y}`];
         }
         break;
-      case 'Space':
+      case ' ': // space --> mark for transfer
         console.log('mark');
+
+        // source is marked for transfer
+        if (isTransferInProgress) {
+          // if this was a source, unmark it
+          if (bindDeckCardsByXY[`${x}-${y}`].isSelectedForDrag) {
+            bindDeckCardsByXY[`${x}-${y}`].isSelectedForDrag =
+              !bindDeckCardsByXY[`${x}-${y}`].isSelectedForDrag;
+            isTransferInProgress = false;
+          } else {
+            // decided to transfer; check if source can go to destination
+            destination = bindDeckCardsByXY[`${x}-${y}`];
+            console.log(
+              'check if source can go to destination',
+              source,
+              destination,
+            );
+            isTransferOk = checkForTransfer({ source, destination });
+            console.log({ isTransferOk });
+            // clear source and destination
+          }
+        } else {
+          bindDeckCardsByXY[`${x}-${y}`].isSelectedForDrag =
+            !bindDeckCardsByXY[`${x}-${y}`].isSelectedForDrag;
+          isTransferInProgress = true;
+          source = bindDeckCardsByXY[`${x}-${y}`];
+        }
         break;
       default:
         break;

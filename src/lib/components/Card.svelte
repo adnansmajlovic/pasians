@@ -9,6 +9,7 @@
   export let y = 0;
 
   export let isMarked = false;
+  export let isSelectedForDrag = false;
 
   const colors = {
     red: 'text-red-800',
@@ -49,7 +50,8 @@
     {doubleVertical}{letter.length > 1 ? '' : enSpace}<span
       class=" {isMarked ? ' bg-blue-800 text-yellow-100' : ' text-green-900 '}"
       >{letter}</span
-    >{enSpace}{enSpace}{enSpace}<span class={colors[color]}
+    >{enSpace}{enSpace}{enSpace}<span
+      class="{colors[color]} {isSelectedForDrag ? 'bg-amber-300' : ''} "
       >{symbols[symbol]}</span
     >{enSpace}{doubleVertical}
   </div>
