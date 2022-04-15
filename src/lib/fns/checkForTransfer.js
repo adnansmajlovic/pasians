@@ -53,6 +53,8 @@ function checkNumbers(params) {
   if (intSrcLetter === 10 && dLetter === 'J') {
     return true;
   }
+
+  return false;
 }
 /**
  *

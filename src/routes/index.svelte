@@ -8,6 +8,11 @@
   let keyCode;
   let selectedCard;
 
+  const minX = 0;
+  const maxX = 6;
+  const minY = 0;
+  let maxY = 5;
+
   const arr = [];
   const symbols = ['spade', 'club', 'heart', 'diamond'];
   const letters = [
@@ -28,7 +33,7 @@
 
   let bindTopCards = {};
   let bindDeckCards = {};
-  let bindDeckCardsByXY = {};
+  let bindDeckCardsByYX = {};
 
   let isTransferInProgress = false;
   let isTransferOk = false;
@@ -45,50 +50,71 @@
     keyCode = event.keyCode;
 
     if (!selectedCard) {
-      selectedCard = bindDeckCardsByXY['0-5'];
-      console.log({ x: selectedCard.x, y: selectedCard.y });
+      selectedCard = bindDeckCardsByYX['5-0'];
       selectedCard.isMarked = true;
     }
 
     const x = selectedCard.x;
-    const y = selectedCard.y;
-    const minX = 0;
-    const maxX = 6;
-    const minY = 0;
-    const maxY = 5;
+    let y = selectedCard.y;
 
-    console.log({ bindDeckCardsByXY });
     switch (key) {
       case 'ArrowUp':
-        console.log('up', x, y);
+        console.log('up', { y, x, deck1Y: deck1[x]?.length });
         if (y > minY) {
-          bindDeckCardsByXY[`${x}-${y}`].isMarked = false;
-          bindDeckCardsByXY[`${x}-${y - 1}`].isMarked = true;
-          selectedCard = bindDeckCardsByXY[`${x}-${y - 1}`];
+          if (bindDeckCardsByYX[`${y}-${x}`])
+            bindDeckCardsByYX[`${y}-${x}`].isMarked = false;
+          if (bindDeckCardsByYX[`${y - 1}-${x}`]) {
+            bindDeckCardsByYX[`${y - 1}-${x}`].isMarked = true;
+            selectedCard = bindDeckCardsByYX[`${y - 1}-${x}`];
+          }
         }
         break;
       case 'ArrowDown':
-        console.log('down', x, y);
-        if (y < maxY) {
-          bindDeckCardsByXY[`${x}-${y}`].isMarked = false;
-          bindDeckCardsByXY[`${x}-${y + 1}`].isMarked = true;
-          selectedCard = bindDeckCardsByXY[`${x}-${y + 1}`];
+        console.log('down', { y, x, deck1Y: deck1[x]?.length });
+        if (y < deck1[x].length - 1) {
+          if (bindDeckCardsByYX[`${y}-${x}`])
+            bindDeckCardsByYX[`${y}-${x}`].isMarked = false;
+          if (bindDeckCardsByYX[`${y + 1}-${x}`]) {
+            bindDeckCardsByYX[`${y + 1}-${x}`].isMarked = true;
+            selectedCard = bindDeckCardsByYX[`${y + 1}-${x}`];
+          }
         }
         break;
       case 'ArrowLeft':
-        console.log('left', x, y);
+        console.log('left', { y, x });
+        if (deck1[x] && y > deck1[x].length - 1) {
+          console.log('left', { y, x });
+          y = deck1[x].length - 1;
+          console.log('left 2', { y, x });
+        } else {
+          console.log('no x?', { y, x });
+        }
         if (x > minX) {
-          bindDeckCardsByXY[`${x}-${y}`].isMarked = false;
-          bindDeckCardsByXY[`${x - 1}-${y}`].isMarked = true;
-          selectedCard = bindDeckCardsByXY[`${x - 1}-${y}`];
+          if (bindDeckCardsByYX[`${y}-${x}`])
+            bindDeckCardsByYX[`${y}-${x}`].isMarked = false;
+          if (bindDeckCardsByYX[`${y}-${x - 1}`]) {
+            bindDeckCardsByYX[`${y}-${x - 1}`].isMarked = true;
+            selectedCard = bindDeckCardsByYX[`${y}-${x - 1}`];
+          }
         }
         break;
       case 'ArrowRight':
-        console.log('right', x, y);
+        console.log('right', { y, x });
+        if (deck1[x] && y > deck1[x].length - 1) {
+          console.log('r', { y, x });
+          y = deck1[x].length - 1;
+          console.log('r 2', { y, x });
+        } else {
+          console.log('no x?', { y, x });
+        }
+
         if (x < maxX) {
-          bindDeckCardsByXY[`${x}-${y}`].isMarked = false;
-          bindDeckCardsByXY[`${x + 1}-${y}`].isMarked = true;
-          selectedCard = bindDeckCardsByXY[`${x + 1}-${y}`];
+          if (bindDeckCardsByYX[`${y}-${x}`])
+            bindDeckCardsByYX[`${y}-${x}`].isMarked = false;
+          if (bindDeckCardsByYX[`${y}-${x + 1}`]) {
+            bindDeckCardsByYX[`${y}-${x + 1}`].isMarked = true;
+            selectedCard = bindDeckCardsByYX[`${y}-${x + 1}`];
+          }
         }
         break;
       case ' ': // space --> mark for transfer
@@ -96,28 +122,59 @@
 
         // source is marked for transfer
         if (isTransferInProgress) {
-          // if this was a source, unmark it
-          if (bindDeckCardsByXY[`${x}-${y}`].isSelectedForDrag) {
-            bindDeckCardsByXY[`${x}-${y}`].isSelectedForDrag =
-              !bindDeckCardsByXY[`${x}-${y}`].isSelectedForDrag;
+          // if this was a marked source, unmark it
+          if (bindDeckCardsByYX[`${y}-${x}`].isSelectedForDrag) {
+            bindDeckCardsByYX[`${y}-${x}`].isSelectedForDrag =
+              !bindDeckCardsByYX[`${y}-${x}`].isSelectedForDrag;
             isTransferInProgress = false;
           } else {
             // decided to transfer; check if source can go to destination
-            destination = bindDeckCardsByXY[`${x}-${y}`];
+            destination = bindDeckCardsByYX[`${y}-${x}`];
             console.log(
               'check if source can go to destination',
               source,
               destination,
             );
             isTransferOk = checkForTransfer({ source, destination });
-            console.log({ isTransferOk });
+            console.log({ isTransferOk, source, destination });
+
+            if (isTransferOk) {
+              console.log('transfer ok', {
+                source,
+                sx: source.x,
+                sy: source.y,
+                dx: destination.x,
+                dy: destination.y,
+                deck1,
+              });
+
+              // a.s. just testing some concepts
+              // most likely need separate arrays for each column
+              // const sourceCard = deck1[source.y][source.x];
+              const sourceCard = deck1[source.x][source.y];
+              console.log({
+                attentioN: 'only this sourceCard',
+                sourceCard,
+                deck1,
+                sourcey: source.y,
+                sourcex: source.x,
+              });
+              console.log('1', deck1[source.x].length, { c1: deck1[source.x] });
+              deck1[source.x].splice(source.y, 1);
+              deck1[destination.x].splice(destination.y + 1, 0, sourceCard);
+              deck1 = deck1;
+              console.log('2', deck1[source.x].length);
+            }
             // clear source and destination
+            selectedCard.isMarked = false;
+            isTransferInProgress = false;
           }
         } else {
-          bindDeckCardsByXY[`${x}-${y}`].isSelectedForDrag =
-            !bindDeckCardsByXY[`${x}-${y}`].isSelectedForDrag;
+          bindDeckCardsByYX[`${y}-${x}`].isSelectedForDrag =
+            !bindDeckCardsByYX[`${y}-${x}`].isSelectedForDrag;
           isTransferInProgress = true;
-          source = bindDeckCardsByXY[`${x}-${y}`];
+          source = bindDeckCardsByYX[`${y}-${x}`];
+          console.log('source', source);
         }
         break;
       default:
@@ -149,12 +206,13 @@
   top10Cards.sort(() => Math.random() - 0.5);
   restOfCards.sort(() => Math.random() - 0.5);
 
-  // let deck = [7][6];
-  let deck = [];
-  for (let y = 0; y < 6; y++) {
-    deck[y] = [];
-    for (let x = 0; x < 7; x++) {
-      deck[y][x] = restOfCards.pop();
+  let restOfCards1 = [...restOfCards];
+
+  let deck1 = [];
+  for (let x = 0; x < 7; x++) {
+    deck1[x] = [];
+    for (let y = 0; y < 6; y++) {
+      deck1[x][y] = restOfCards1.pop();
     }
   }
 
@@ -192,22 +250,50 @@
   {/each}
 </div>
 
-<div class="grid grid-cols-7 gap-0 ml-2 mb-4">
-  {#each deck as card, y}
-    {#each card as { color, letter, symbol }, x}
-      <Card
-        bind:this={bindDeckCards[`${letter}-${symbol}`]}
-        size={y > deck.length - 2 ? 'full' : 'top'}
-        {y}
-        {x}
-        {letter}
-        {symbol}
-        {color}
-      />
-      <!-- assign the binded "this" to coordinates -->
-      {(bindDeckCardsByXY[`${x}-${y}`] = bindDeckCards[`${letter}-${symbol}`])
-        ? ''
-        : ''}
+<!-- a.s. new way preserve -->
+<div class="container mx-auto">
+  <div class="grid grid-cols-7 gap-1">
+    {#each deck1 as colCards}
+      {#if colCards.length > 0}
+        <div class="">
+          {#each colCards as card}
+            <div class="w-full card aspect-auto">{card.letter}</div>
+          {/each}
+        </div>
+      {:else}
+        <div class="column w-full card aspect-auto">&nbsp;</div>
+      {/if}
     {/each}
-  {/each}
+  </div>
+</div>
+<!-- a.s. new way -->
+
+<div class="container mx-auto">
+  <div class="grid grid-cols-7 gap-1">
+    {#each deck1 as colCards, x}
+      {#if colCards.length > 0}
+        <div class="">
+          {#each colCards as { color, letter, symbol }, y}
+            <div class="w-full card aspect-auto">
+              <Card
+                bind:this={bindDeckCards[`${letter}-${symbol}`]}
+                size={y > colCards.length - 2 ? 'full' : 'top'}
+                {y}
+                {x}
+                {letter}
+                {symbol}
+                {color}
+              />
+              {(bindDeckCardsByYX[`${y}-${x}`] =
+                bindDeckCards[`${letter}-${symbol}`])
+                ? ''
+                : ''}
+            </div>
+          {/each}
+        </div>
+      {:else}
+        <div class="column w-full card aspect-auto">&nbsp;</div>
+      {/if}
+    {/each}
+  </div>
 </div>
