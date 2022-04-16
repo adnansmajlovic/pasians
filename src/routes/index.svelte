@@ -281,7 +281,7 @@
 <svelte:window on:keydown={handleKeydown} />
 
 <h1 class="text-3xl font-semibold items-center text-center m-2">
-  Pasians - Solitaire
+  Pasians - Solitaire (v 80's)
 </h1>
 
 <div style="text-align: center">
@@ -337,8 +337,8 @@
 </div>
 
 <footer>
-  <div class="mt-10 bottom-0 bg-green-900 text-center">
-    Author: Adnan Smajlovic ⓒ originally created in Borland Turbo C, ~1988 in
+  <div class="mt-10 bottom-0 bg-blue-400 text-center">
+    Author: Adnan Smajlovic ⓒ originally created with Borland Turbo C, ~1988 in
     Sarajevo / re-written in SvelteKit, during a weekend - Apr 2022 😁
   </div>
 </footer>
