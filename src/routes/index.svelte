@@ -56,10 +56,12 @@
 
     const x = selectedCard.x;
     let y = selectedCard.y;
+    let thisY;
+
+    console.log('movement', { y, x, deck1Y: deck1[x]?.length, deck1 });
 
     switch (key) {
       case 'ArrowUp':
-        console.log('up', { y, x, deck1Y: deck1[x]?.length });
         if (y > minY) {
           if (bindDeckCardsByYX[`${y}-${x}`])
             bindDeckCardsByYX[`${y}-${x}`].isMarked = false;
@@ -81,17 +83,23 @@
         }
         break;
       case 'ArrowLeft':
-        console.log('left', { y, x });
-        if (deck1[x] && y > deck1[x].length - 1) {
-          console.log('left', { y, x });
-          y = deck1[x].length - 1;
-          console.log('left 2', { y, x });
-        } else {
-          console.log('no x?', { y, x });
-        }
+        console.log('left', {
+          y,
+          x,
+          dLength: deck1[x]?.length,
+          next: deck1[x - 1],
+        });
+
         if (x > minX) {
+          // a.s. prepare y length of the previous column
+          thisY = deck1[x - 1].length - 1;
+
           if (bindDeckCardsByYX[`${y}-${x}`])
             bindDeckCardsByYX[`${y}-${x}`].isMarked = false;
+
+          // a.s. position y at the bottom of the previous column
+          y = thisY;
+
           if (bindDeckCardsByYX[`${y}-${x - 1}`]) {
             bindDeckCardsByYX[`${y}-${x - 1}`].isMarked = true;
             selectedCard = bindDeckCardsByYX[`${y}-${x - 1}`];
@@ -99,18 +107,25 @@
         }
         break;
       case 'ArrowRight':
-        console.log('right', { y, x });
-        if (deck1[x] && y > deck1[x].length - 1) {
-          console.log('r', { y, x });
-          y = deck1[x].length - 1;
-          console.log('r 2', { y, x });
-        } else {
-          console.log('no x?', { y, x });
-        }
+        console.log('right', {
+          y,
+          x,
+          dLength: deck1[x]?.length,
+          next: deck1[x + 1],
+        });
 
         if (x < maxX) {
+          // a.s. prepare y length of the next column
+          thisY = deck1[x + 1].length - 1;
+
           if (bindDeckCardsByYX[`${y}-${x}`])
             bindDeckCardsByYX[`${y}-${x}`].isMarked = false;
+
+          console.log({ oldY: y, newY: thisY });
+
+          // a.s. position y at the bottom of the next column
+          y = thisY;
+
           if (bindDeckCardsByYX[`${y}-${x + 1}`]) {
             bindDeckCardsByYX[`${y}-${x + 1}`].isMarked = true;
             selectedCard = bindDeckCardsByYX[`${y}-${x + 1}`];
@@ -118,7 +133,7 @@
         }
         break;
       case ' ': // space --> mark for transfer
-        console.log('mark');
+        console.log('mark a card');
 
         // source is marked for transfer
         if (isTransferInProgress) {
@@ -160,14 +175,21 @@
                 sourcex: source.x,
               });
               console.log('1', deck1[source.x].length, { c1: deck1[source.x] });
+              // a.s. delete card from the source column
               deck1[source.x].splice(source.y, 1);
+
+              // a.s. add card to the destination column
               deck1[destination.x].splice(destination.y + 1, 0, sourceCard);
+
+              // a.s. refresh the deck1
               deck1 = deck1;
-              console.log('2', deck1[source.x].length);
+
+              // clear source and destination
+              isTransferInProgress = false;
+            } else {
+              // transfer not ok
+              console.log('transfer not ok');
             }
-            // clear source and destination
-            selectedCard.isMarked = false;
-            isTransferInProgress = false;
           }
         } else {
           bindDeckCardsByYX[`${y}-${x}`].isSelectedForDrag =
@@ -249,24 +271,6 @@
     />
   {/each}
 </div>
-
-<!-- a.s. new way preserve -->
-<div class="container mx-auto">
-  <div class="grid grid-cols-7 gap-1">
-    {#each deck1 as colCards}
-      {#if colCards.length > 0}
-        <div class="">
-          {#each colCards as card}
-            <div class="w-full card aspect-auto">{card.letter}</div>
-          {/each}
-        </div>
-      {:else}
-        <div class="column w-full card aspect-auto">&nbsp;</div>
-      {/if}
-    {/each}
-  </div>
-</div>
-<!-- a.s. new way -->
 
 <div class="container mx-auto">
   <div class="grid grid-cols-7 gap-1">
