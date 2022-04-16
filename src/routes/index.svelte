@@ -58,8 +58,6 @@
     let y = selectedCard.y;
     let thisY;
 
-    console.log('movement', { y, x, deck1Y: deck1[x]?.length, deck1 });
-
     switch (key) {
       case 'ArrowUp':
         if (y > minY) {
@@ -121,8 +119,6 @@
           if (bindDeckCardsByYX[`${y}-${x}`])
             bindDeckCardsByYX[`${y}-${x}`].isMarked = false;
 
-          console.log({ oldY: y, newY: thisY });
-
           // a.s. position y at the bottom of the next column
           y = thisY;
 
@@ -145,11 +141,6 @@
           } else {
             // decided to transfer; check if source can go to destination
             destination = bindDeckCardsByYX[`${y}-${x}`];
-            console.log(
-              'check if source can go to destination',
-              source,
-              destination,
-            );
 
             console.log({
               sourceY: source.y,
@@ -159,11 +150,19 @@
               destinationX: destination.x,
             });
 
-            isTransferOk = checkForTransfer({
-              source,
-              destination,
-              deckColumn: deck1[source.x],
-            });
+            // a.s. check if destination card is the last one
+            //
+            if (destination.y !== deck1[destination.x].length - 1) {
+              console.log('destination is not the last card in a column');
+              isTransferOk = false;
+            } else {
+              // a.s. check if source can go to destination
+              isTransferOk = checkForTransfer({
+                source,
+                destination,
+                deckColumn: deck1[source.x],
+              });
+            }
 
             console.log({ isTransferOk, source, destination });
 
@@ -273,8 +272,6 @@
 
   onMount(() => {
     const cards = document.querySelectorAll('.card');
-    console.log({ cards });
-    console.log({ bindDeckCards, bindTopCards });
   });
 </script>
 

@@ -1,6 +1,26 @@
 export function checkForTransfer(params) {
   const { source: s, destination: d, deckColumn } = params;
 
+  const letters = [
+    'A',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    'J',
+    'Q',
+    'K',
+  ];
+
+  // a.s. need to check if the order is right if we
+  // try to transfer multiple cards from the same column
+  const reversedLetters = letters.reverse();
+
   const sLetter = s.letter;
   const sSymbol = s.symbol;
   const dLetter = d.letter;
@@ -28,9 +48,26 @@ export function checkForTransfer(params) {
         symbol: deckColumn[i].symbol,
         dSymbol,
       });
+
       if (deckColumn[i].symbol !== sSymbol) {
         console.log(
           'multiple cards cannot be transferred due to different symbols',
+        );
+        isTransferOk = false;
+        return isTransferOk;
+      }
+
+      const previousIndex = reversedLetters.indexOf(deckColumn[i - 1].letter);
+      const currentIndex = reversedLetters.indexOf(deckColumn[i].letter);
+      console.log('☝️ indexes:', {
+        previousIndex,
+        pl: deckColumn[i - 1].letter,
+        currentIndex,
+        cl: deckColumn[i].letter,
+      });
+      if (previousIndex !== currentIndex - 1) {
+        console.log(
+          'multiple cards cannot be transferred due to different order',
         );
         isTransferOk = false;
         return isTransferOk;
