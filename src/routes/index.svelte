@@ -150,7 +150,21 @@
               source,
               destination,
             );
-            isTransferOk = checkForTransfer({ source, destination });
+
+            console.log({
+              sourceY: source.y,
+              deckY: deck1[source.x]?.length,
+              sourceX: source.x,
+              destinationY: destination.y,
+              destinationX: destination.x,
+            });
+
+            isTransferOk = checkForTransfer({
+              source,
+              destination,
+              deckColumn: deck1[source.x],
+            });
+
             console.log({ isTransferOk, source, destination });
 
             if (isTransferOk) {
@@ -167,19 +181,39 @@
               // most likely need separate arrays for each column
               // const sourceCard = deck1[source.y][source.x];
               const sourceCard = deck1[source.x][source.y];
+              let sourceCards = [];
+
+              for (let index = 0; index < deck1[source.x].length; index++) {
+                if (deck1[source.x][source.y + index]) {
+                  console.log(
+                    'ready to insert',
+                    deck1[source.x][source.y + index],
+                  );
+                  sourceCards.push(deck1[source.x][source.y + index]);
+                }
+              }
+
               console.log({
                 attentioN: 'only this sourceCard',
                 sourceCard,
                 deck1,
                 sourcey: source.y,
                 sourcex: source.x,
+                sourceCards,
               });
-              console.log('1', deck1[source.x].length, { c1: deck1[source.x] });
-              // a.s. delete card from the source column
-              deck1[source.x].splice(source.y, 1);
 
-              // a.s. add card to the destination column
-              deck1[destination.x].splice(destination.y + 1, 0, sourceCard);
+              console.log('1', deck1[source.x].length, {
+                c1: deck1[source.x],
+              });
+
+              // a.s. delete card(s) from the source column
+              deck1[source.x].splice(
+                source.y,
+                1 + deck1[source.x].length - source.y,
+              );
+
+              // a.s. add card(s) to the destination column
+              deck1[destination.x].splice(destination.y + 1, 0, ...sourceCards);
 
               // a.s. refresh the deck1
               deck1 = deck1;
@@ -196,7 +230,6 @@
             !bindDeckCardsByYX[`${y}-${x}`].isSelectedForDrag;
           isTransferInProgress = true;
           source = bindDeckCardsByYX[`${y}-${x}`];
-          console.log('source', source);
         }
         break;
       default:

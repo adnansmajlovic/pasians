@@ -1,5 +1,5 @@
 export function checkForTransfer(params) {
-  const { source: s, destination: d } = params;
+  const { source: s, destination: d, deckColumn } = params;
 
   const sLetter = s.letter;
   const sSymbol = s.symbol;
@@ -10,6 +10,35 @@ export function checkForTransfer(params) {
   const intDestLetter = parseInt(dLetter);
 
   let isTransferOk = false;
+
+  // a.s. check if multiple cards are being transferred
+  if (s.y < deckColumn.length - 1) {
+    console.log('checkForTransfer multiple cards');
+
+    console.log('loop:', {
+      start: s.y,
+      length: deckColumn.length - 1,
+      deckColumn,
+    });
+    // a.s. check if the next card is the same symbol
+    for (let i = s.y; i < deckColumn.length; i++) {
+      console.log('☝️ loop:', {
+        i,
+        letter: deckColumn[i].letter,
+        symbol: deckColumn[i].symbol,
+        dSymbol,
+      });
+      if (deckColumn[i].symbol !== sSymbol) {
+        console.log(
+          'multiple cards cannot be transferred due to different symbols',
+        );
+        isTransferOk = false;
+        return isTransferOk;
+      }
+    }
+  } else {
+    console.log('checkForTransfer single card');
+  }
 
   // it is a number 2-10
   if (!isNaN(intSrcLetter)) {
