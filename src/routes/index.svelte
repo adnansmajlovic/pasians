@@ -9,9 +9,9 @@
   let selectedCard;
 
   const minX = 0;
-  const maxX = 6;
+  const maxX = 7;
   const minY = 0;
-  let maxY = 5;
+  let maxY = 7;
 
   const arr = [];
   const symbols = ['spade', 'club', 'heart', 'diamond'];
@@ -142,19 +142,11 @@
             // decided to transfer; check if source can go to destination
             destination = bindDeckCardsByYX[`${y}-${x}`];
 
-            console.log({
-              sourceY: source.y,
-              deckY: deck1[source.x]?.length,
-              sourceX: source.x,
-              destinationY: destination.y,
-              destinationX: destination.x,
-            });
-
             // a.s. check if destination card is the last one
             //
             if (destination.y !== deck1[destination.x].length - 1) {
               console.log('destination is not the last card in a column');
-              isTransferOk = false;
+              // isTransferOk = false;
             } else {
               // a.s. check if source can go to destination
               isTransferOk = checkForTransfer({
@@ -163,8 +155,6 @@
                 deckColumn: deck1[source.x],
               });
             }
-
-            console.log({ isTransferOk, source, destination });
 
             if (isTransferOk) {
               console.log('transfer ok', {
@@ -253,20 +243,32 @@
   // shuffle
   arr.sort(() => Math.random() - 0.5);
 
-  const top10Cards = arr.slice(0, 10);
-  const restOfCards = arr.slice(10);
+  // const top10Cards = arr.slice(0, 10);
+  // const restOfCards = arr.slice(10);
+  const restOfCards = arr;
 
   // shuffle
-  top10Cards.sort(() => Math.random() - 0.5);
+  // top10Cards.sort(() => Math.random() - 0.5);
   restOfCards.sort(() => Math.random() - 0.5);
 
   let restOfCards1 = [...restOfCards];
 
   let deck1 = [];
-  for (let x = 0; x < 7; x++) {
+  for (let x = 0; x < 8; x++) {
     deck1[x] = [];
     for (let y = 0; y < 6; y++) {
-      deck1[x][y] = restOfCards1.pop();
+      if (restOfCards1.length > 0) {
+        deck1[x][y] = restOfCards1.pop();
+      }
+    }
+  }
+
+  for (let x = 0; x < 4; x++) {
+    // deck1[x] = [];
+    for (let y = 6; y < 7; y++) {
+      if (restOfCards1.length > 0) {
+        deck1[x][y] = restOfCards1.pop();
+      }
     }
   }
 
@@ -277,21 +279,18 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-<h1 class="text-3xl font-semibold items-center text-center m-2">
+<h1 class="text-3xl font-semibold items-center text-center m-2 text-[#209CEE]">
   Pasians - Solitaire (v 80's)
 </h1>
 
 <div style="text-align: center">
-  {#if key}
-    <!-- <kbd>{key === ' ' ? 'Space' : key}</kbd>
-    <p>{keyCode}</p> -->
-  {:else}
+  {#if !key}
     <p>Focus this window and use arrow keys to play</p>
     <p>Space to mark the card for a move!</p>
   {/if}
 </div>
 
-<div class="grid grid-cols-10 gap-1 ml-2 mb-4">
+<!-- <div class="grid grid-cols-10 gap-1 ml-2 mb-4">
   {#each top10Cards as { color, letter, symbol }, i}
     <Card
       bind:this={bindTopCards[`${letter}-${symbol}`]}
@@ -301,10 +300,10 @@
       {color}
     />
   {/each}
-</div>
+</div> -->
 
 <div class="container mx-auto">
-  <div class="grid grid-cols-7 gap-1">
+  <div class="grid grid-cols-8 gap-1">
     {#each deck1 as colCards, x}
       {#if colCards.length > 0}
         <div class="">
@@ -336,6 +335,6 @@
 <footer>
   <div class="mt-10 bottom-0 bg-blue-400 text-center">
     Author: Adnan Smajlovic ⓒ originally created with Borland Turbo C, ~1988 in
-    Sarajevo / re-written in SvelteKit, during the Easter weekend - Apr 2022 😁
+    Sarajevo / re-written in SvelteKit, during the Easter weekend (Apr 2022) 😁
   </div>
 </footer>

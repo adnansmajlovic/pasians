@@ -41,15 +41,10 @@ export function checkForTransfer(params) {
       deckColumn,
     });
     // a.s. check if the next card is the same symbol
-    for (let i = s.y; i < deckColumn.length; i++) {
-      console.log('☝️ loop:', {
-        i,
-        letter: deckColumn[i].letter,
-        symbol: deckColumn[i].symbol,
-        dSymbol,
-      });
-
-      if (deckColumn[i].symbol !== sSymbol) {
+    const firstIndex = reversedLetters.indexOf(deckColumn[s.y].letter);
+    for (let i = 0; i < deckColumn.length - s.y; i++) {
+      // a.s. check if the next card is the same symbol
+      if (deckColumn[s.y + i].symbol !== sSymbol) {
         console.log(
           'multiple cards cannot be transferred due to different symbols',
         );
@@ -57,17 +52,11 @@ export function checkForTransfer(params) {
         return isTransferOk;
       }
 
-      const previousIndex = reversedLetters.indexOf(deckColumn[i - 1].letter);
-      const currentIndex = reversedLetters.indexOf(deckColumn[i].letter);
-      console.log('☝️ indexes:', {
-        previousIndex,
-        pl: deckColumn[i - 1].letter,
-        currentIndex,
-        cl: deckColumn[i].letter,
-      });
-      if (previousIndex !== currentIndex - 1) {
+      const currentIndex = reversedLetters.indexOf(deckColumn[s.y + i].letter);
+
+      if (!(currentIndex === firstIndex || currentIndex === firstIndex + i)) {
         console.log(
-          'multiple cards cannot be transferred due to different order',
+          'multiple cards cannot be transferred due to not being ordered correctly',
         );
         isTransferOk = false;
         return isTransferOk;
