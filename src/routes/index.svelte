@@ -286,8 +286,8 @@
 
 <div style="text-align: center">
   {#if key}
-    <kbd>{key === ' ' ? 'Space' : key}</kbd>
-    <p>{keyCode}</p>
+    <!-- <kbd>{key === ' ' ? 'Space' : key}</kbd>
+    <p>{keyCode}</p> -->
   {:else}
     <p>Focus this window and use arrow keys to play</p>
     <p>Space to mark the card for a move!</p>
@@ -338,6 +338,7 @@
 
 <footer>
   <div class="mt-10 bottom-0 bg-green-900 text-center">
-    Author: Adnan Smajlovic ⓒ 1985 / Apr 2022
+    Author: Adnan Smajlovic ⓒ originally created in Borland Turbo C, ~1988 in
+    Sarajevo / re-written in SvelteKit, during a weekend - Apr 2022 😁
   </div>
 </footer>
