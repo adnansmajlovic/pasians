@@ -289,7 +289,8 @@
     <kbd>{key === ' ' ? 'Space' : key}</kbd>
     <p>{keyCode}</p>
   {:else}
-    <p>Focus this window and press any key</p>
+    <p>Focus this window and use arrow keys to play</p>
+    <p>Space to mark the card for a move!</p>
   {/if}
 </div>
 
@@ -334,3 +335,9 @@
     {/each}
   </div>
 </div>
+
+<footer>
+  <div class="mt-10 bottom-0 bg-green-900 text-center">
+    Author: Adnan Smajlovic ⓒ 1985 / Apr 2022
+  </div>
+</footer>
