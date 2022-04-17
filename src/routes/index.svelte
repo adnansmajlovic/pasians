@@ -1,8 +1,9 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
 
   import Card from '../lib/components/Card.svelte';
   import { checkForTransfer } from '$lib/fns/checkForTransfer';
+  import { checkForTopTransfer } from '$lib/fns/checkForTopTransfer';
 
   let key;
   let keyCode;
@@ -40,6 +41,11 @@
   let source;
   let destination;
 
+  let x = 0;
+  let y = 0;
+  let deck1 = [];
+  let top4columns = [];
+
   /**
    * a.s. Movement
    *
@@ -50,12 +56,19 @@
     keyCode = event.keyCode;
 
     if (!selectedCard) {
-      selectedCard = bindDeckCardsByYX['5-0'];
+      // a.s. this logic here is weak, and causing the problem with
+      // the cards not being selected after the previous one was
+      // sent to the top...
+      // TODO fix this
+      // selectedCard = bindDeckCardsByYX['0-0'];
+      // a.s. this is a bit better, handle when a column is empty
+      selectedCard = bindDeckCardsByYX[`${deck1[x].length - 1}-${x}`];
       selectedCard.isMarked = true;
     }
 
-    const x = selectedCard.x;
-    let y = selectedCard.y;
+    console.log({ key, keyCode });
+    x = selectedCard.x;
+    y = selectedCard.y;
     let thisY;
 
     switch (key) {
@@ -221,6 +234,52 @@
           source = bindDeckCardsByYX[`${y}-${x}`];
         }
         break;
+      // a.s. mark to send to the top
+      case 'x':
+      case 'X':
+        if (y !== deck1[x].length - 1) {
+          console.log('has to be the last card in a column');
+          break;
+        }
+
+        const { isMoveAllowed, columnIndex } = checkForTopTransfer({
+          letters,
+          currentCard: deck1[x][y],
+          top4columns,
+        });
+
+        if (isMoveAllowed) {
+          const letter = deck1[x][y].letter;
+          const symbol = deck1[x][y].symbol;
+          // TODO: need a matching index of the column
+          const x1 = letter === 'A' ? top4columns.length - 1 : columnIndex || 0;
+          const y1 = 0;
+
+          // a.s. delete card(s) from the source column
+          console.log({ selectedCard, dk: deck1[x] });
+          console.log(deck1[x][y]);
+          // a.s. add card(s) to the top column
+          top4columns[x1].splice(y1, 0, deck1[x][y]);
+          top4columns = top4columns;
+
+          // a.s. remove the last card from the column
+          const res = deck1[x].splice(deck1[x].length - 1, 1);
+
+          y = deck1[x].length > 0 ? deck1[x].length - 1 : 0;
+
+          if (bindDeckCardsByYX[`${y}-${x}`]) {
+            delete bindDeckCardsByYX[`${y}-${x}`];
+            delete bindDeckCards[`${letter}-${symbol}`];
+            selectedCard = null;
+          }
+
+          deck1 = deck1;
+        } else {
+          console.log('cannot be sent to the top');
+        }
+
+        break;
+
       default:
         break;
     }
@@ -243,17 +302,15 @@
   // shuffle
   arr.sort(() => Math.random() - 0.5);
 
-  // const top10Cards = arr.slice(0, 10);
   // const restOfCards = arr.slice(10);
   const restOfCards = arr;
 
   // shuffle
-  // top10Cards.sort(() => Math.random() - 0.5);
+  // top4columns.sort(() => Math.random() - 0.5);
   restOfCards.sort(() => Math.random() - 0.5);
 
   let restOfCards1 = [...restOfCards];
 
-  let deck1 = [];
   for (let x = 0; x < 8; x++) {
     deck1[x] = [];
     for (let y = 0; y < 6; y++) {
@@ -264,7 +321,6 @@
   }
 
   for (let x = 0; x < 4; x++) {
-    // deck1[x] = [];
     for (let y = 6; y < 7; y++) {
       if (restOfCards1.length > 0) {
         deck1[x][y] = restOfCards1.pop();
@@ -290,8 +346,22 @@
   {/if}
 </div>
 
-<!-- <div class="grid grid-cols-10 gap-1 ml-2 mb-4">
-  {#each top10Cards as { color, letter, symbol }, i}
+<div class="grid grid-cols-10 gap-1 ml-2 mb-4">
+  {#each top4columns as topCol}
+    {#each topCol as { color, letter, symbol }, i}
+      <!-- {#if i === topCol.length - 1} -->
+      {#if i === 0}
+        <Card
+          bind:this={bindTopCards[`${letter}-${symbol}`]}
+          size="full"
+          {letter}
+          {symbol}
+          {color}
+        />
+      {/if}
+    {/each}
+  {/each}
+  <!-- {#each top4columns as { color, letter, symbol }, i}
     <Card
       bind:this={bindTopCards[`${letter}-${symbol}`]}
       size="full"
@@ -299,8 +369,8 @@
       {symbol}
       {color}
     />
-  {/each}
-</div> -->
+  {/each} -->
+</div>
 
 <div class="container mx-auto">
   <div class="grid grid-cols-8 gap-1">
@@ -334,7 +404,7 @@
 
 <footer>
   <div class="mt-10 bottom-0 bg-blue-400 text-center">
-    Author: Adnan Smajlovic ⓒ originally created with Borland Turbo C, ~1988 in
-    Sarajevo / re-written in SvelteKit, during the Easter weekend (Apr 2022) 😁
+    Author: Adnan Smajlovic ⓒ originally created with Borland Turbo C, ~1987 in
+    Sarajevo / re-written in SvelteKit, during a weekend, Apr 2022 😁
   </div>
 </footer>
