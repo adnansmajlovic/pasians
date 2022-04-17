@@ -25,7 +25,7 @@ export function checkForTopTransfer(params) {
     return { isMoveAllowed: true, columnIndex: null };
   }
 
-  const matchingLetterIndex = letters.indexOf(currentCard.letter);
+  let matchingLetterIndex = letters.indexOf(currentCard.letter);
 
   for (const [index, column] of top4columns.entries()) {
     console.log({ column, cLength: column.length });

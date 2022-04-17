@@ -102,6 +102,10 @@
         });
 
         if (x > minX) {
+          if (deck1[x - 1]?.length === 0) {
+            x--;
+          }
+
           // a.s. prepare y length of the previous column
           thisY = deck1[x - 1].length - 1;
 
@@ -124,6 +128,10 @@
           dLength: deck1[x]?.length,
           next: deck1[x + 1],
         });
+
+        if (deck1[x + 1]?.length === 0) {
+          x++;
+        }
 
         if (x < maxX) {
           // a.s. prepare y length of the next column
@@ -242,43 +250,69 @@
           break;
         }
 
-        const { isMoveAllowed, columnIndex } = checkForTopTransfer({
-          letters,
-          currentCard: deck1[x][y],
-          top4columns,
-        });
+        // a.s. move King to an empty column
+        if (deck1[x][y].letter === 'K') {
+          for (const [index, column] of deck1.entries()) {
+            console.log({ column, index, cLength: column.length, x, y });
+            if (column.length === 0) {
+              console.log('empty column');
+              // a.s. delete card(s) from the source column
+              const sourceCards = deck1[x].splice(y, 1 + deck1[x].length - y);
 
-        if (isMoveAllowed) {
-          const letter = deck1[x][y].letter;
-          const symbol = deck1[x][y].symbol;
-          // TODO: need a matching index of the column
-          const x1 = letter === 'A' ? top4columns.length - 1 : columnIndex || 0;
-          const y1 = 0;
+              console.log({ sourceCards, cLength: column.length });
+              // a.s. add card(s) to the destination column
+              deck1[index].splice(column.length, 0, ...sourceCards);
+              selectedCard = null;
 
-          // a.s. delete card(s) from the source column
-          console.log({ selectedCard, dk: deck1[x] });
-          console.log(deck1[x][y]);
-          // a.s. add card(s) to the top column
-          top4columns[x1].splice(y1, 0, deck1[x][y]);
-          top4columns = top4columns;
+              x = index;
+              y = column.length - 1;
+              // a.s. refresh the deck1
+              deck1 = deck1;
 
-          // a.s. remove the last card from the column
-          const res = deck1[x].splice(deck1[x].length - 1, 1);
+              break;
+            }
+          }
+        } else {
+          const { isMoveAllowed, columnIndex } = checkForTopTransfer({
+            letters,
+            currentCard: deck1[x][y],
+            top4columns,
+          });
 
-          y = deck1[x].length > 0 ? deck1[x].length - 1 : 0;
+          if (isMoveAllowed) {
+            const letter = deck1[x][y].letter;
+            const symbol = deck1[x][y].symbol;
 
-          if (bindDeckCardsByYX[`${y}-${x}`]) {
-            delete bindDeckCardsByYX[`${y}-${x}`];
-            delete bindDeckCards[`${letter}-${symbol}`];
-            selectedCard = null;
+            // TODO: need a matching index of the column
+            const x1 =
+              letter === 'A' ? top4columns.length - 1 : columnIndex || 0;
+            const y1 = top4columns[x1].length + 1;
+
+            // a.s. delete card(s) from the source column
+            console.log({ selectedCard, dk: deck1[x] });
+            console.log(deck1[x][y]);
+            // a.s. add card(s) to the top column
+            top4columns[x1].splice(y1, 0, deck1[x][y]);
+            top4columns = top4columns;
+
+            // a.s. remove the last card from the column
+            const res = deck1[x].splice(deck1[x].length - 1, 1);
+
+            y = deck1[x].length > 0 ? deck1[x].length - 1 : 0;
+
+            if (bindDeckCardsByYX[`${y}-${x}`]) {
+              delete bindDeckCardsByYX[`${y}-${x}`];
+              delete bindDeckCards[`${letter}-${symbol}`];
+              selectedCard = null;
+            }
+
+            deck1 = deck1;
+          } else {
+            console.log('cannot be sent to the top');
           }
 
-          deck1 = deck1;
-        } else {
-          console.log('cannot be sent to the top');
+          break;
         }
-
-        break;
 
       default:
         break;
@@ -341,9 +375,12 @@
 
 <div style="text-align: center">
   {#if !key}
-    <p>Focus this window and use arrow keys to play</p>
-    <p>Space to mark/unmark the card for a move and drop!</p>
-    <p>X to send the card to the Top row (has to start w/ A)</p>
+    <p>Focus this window and use arrow keys [← ↑ → ↓] to play</p>
+    <p>[Space] to mark/unmark the card for a move and drop!</p>
+    <p>
+      [X] to send the card to the Top row (has to start w/ A), or King to an
+      empty column
+    </p>
   {/if}
 </div>
 
@@ -351,7 +388,7 @@
   {#each top4columns as topCol}
     {#each topCol as { color, letter, symbol }, i}
       <!-- {#if i === topCol.length - 1} -->
-      {#if i === 0}
+      {#if i === topCol.length - 1}
         <Card
           bind:this={bindTopCards[`${letter}-${symbol}`]}
           size="full"
