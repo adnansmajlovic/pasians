@@ -342,7 +342,8 @@
 <div style="text-align: center">
   {#if !key}
     <p>Focus this window and use arrow keys to play</p>
-    <p>Space to mark the card for a move!</p>
+    <p>Space to mark/unmark the card for a move and drop!</p>
+    <p>X to send the card to the Top row (has to start w/ A)</p>
   {/if}
 </div>
 
