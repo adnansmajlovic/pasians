@@ -104,6 +104,7 @@
         if (x > minX) {
           if (deck1[x - 1]?.length === 0) {
             x--;
+            selectedCard = null;
           }
 
           // a.s. prepare y length of the previous column
@@ -129,11 +130,12 @@
           next: deck1[x + 1],
         });
 
-        if (deck1[x + 1]?.length === 0) {
-          x++;
-        }
-
         if (x < maxX) {
+          if (deck1[x + 1]?.length === 0) {
+            x++;
+            selectedCard = null;
+          }
+
           // a.s. prepare y length of the next column
           thisY = deck1[x + 1].length - 1;
 
@@ -370,7 +372,7 @@
 <svelte:window on:keydown={handleKeydown} />
 
 <h1 class="text-3xl font-semibold items-center text-center m-2 text-[#209CEE]">
-  Pasians - Solitaire (v 80's)
+  Pasians - Solitaire (v 80's ⍺)
 </h1>
 
 <div style="text-align: center">
@@ -387,7 +389,6 @@
 <div class="grid grid-cols-10 gap-1 ml-2 mb-4">
   {#each top4columns as topCol}
     {#each topCol as { color, letter, symbol }, i}
-      <!-- {#if i === topCol.length - 1} -->
       {#if i === topCol.length - 1}
         <Card
           bind:this={bindTopCards[`${letter}-${symbol}`]}
@@ -399,15 +400,6 @@
       {/if}
     {/each}
   {/each}
-  <!-- {#each top4columns as { color, letter, symbol }, i}
-    <Card
-      bind:this={bindTopCards[`${letter}-${symbol}`]}
-      size="full"
-      {letter}
-      {symbol}
-      {color}
-    />
-  {/each} -->
 </div>
 
 <div class="container mx-auto">
