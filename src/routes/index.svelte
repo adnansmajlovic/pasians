@@ -380,8 +380,8 @@
     <p>Focus this window and use arrow keys [← ↑ → ↓] to play</p>
     <p>[Space] to mark/unmark the card for a move and drop!</p>
     <p>
-      [X] to send the card to the Top row (has to start w/ A), or King to an
-      empty column
+      [X] to send the card to the Top row (has to start w/ A), as well as a King
+      to an empty column
     </p>
   {/if}
 </div>
