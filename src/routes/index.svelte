@@ -63,12 +63,13 @@
       // selectedCard = bindDeckCardsByYX['0-0'];
       // a.s. this is a bit better, handle when a column is empty
       selectedCard = bindDeckCardsByYX[`${deck1[x].length - 1}-${x}`];
-      selectedCard.isMarked = true;
+
+      if (selectedCard) selectedCard.isMarked = true;
     }
 
     console.log({ key, keyCode });
-    x = selectedCard.x;
-    y = selectedCard.y;
+    x = (selectedCard && selectedCard.x) || 0;
+    y = (selectedCard && selectedCard.y) || 0;
     let thisY;
 
     switch (key) {
@@ -102,10 +103,22 @@
         });
 
         if (x > minX) {
-          if (deck1[x - 1]?.length === 0) {
-            x--;
-            selectedCard = null;
+          // if the first column is empty, stay where you are
+          if (deck1[x - 1]?.length === 0 && x - 1 === minX) {
+            break;
           }
+
+          // a.s. remove the mark from the current card when jumping to the next column
+          if (bindDeckCardsByYX[`${y}-${x}`])
+            bindDeckCardsByYX[`${y}-${x}`].isMarked = false;
+
+          // a.s. loop through multiple empty columns
+          do {
+            if (deck1[x - 1]?.length === 0) {
+              x--;
+              selectedCard = null;
+            }
+          } while (x > minX && deck1[x - 1]?.length === 0);
 
           // a.s. prepare y length of the previous column
           thisY = deck1[x - 1].length - 1;
@@ -131,13 +144,27 @@
         });
 
         if (x < maxX) {
-          if (deck1[x + 1]?.length === 0) {
-            x++;
-            selectedCard = null;
+          // if the last column is empty, stay where you are
+          if (deck1[x + 1]?.length === 0 && x + 1 === maxX) {
+            break;
           }
 
+          // a.s. remove the mark from the current card when jumping to the next column
+          if (bindDeckCardsByYX[`${y}-${x}`])
+            bindDeckCardsByYX[`${y}-${x}`].isMarked = false;
+
+          // a.s. loop through multiple empty columns
+          do {
+            if (deck1[x + 1]?.length === 0) {
+              x++;
+              selectedCard = null;
+            }
+          } while (x < maxX && deck1[x + 1]?.length === 0);
+
           // a.s. prepare y length of the next column
-          thisY = deck1[x + 1].length - 1;
+          if (deck1[x + 1]?.length > 0) {
+            thisY = deck1[x + 1].length - 1;
+          }
 
           if (bindDeckCardsByYX[`${y}-${x}`])
             bindDeckCardsByYX[`${y}-${x}`].isMarked = false;
@@ -244,6 +271,91 @@
           source = bindDeckCardsByYX[`${y}-${x}`];
         }
         break;
+      // case 'z': // temp, delete later
+      // case 'Z': // TODO: delete later
+      //   console.log('mark a card');
+
+      //   // source is marked for transfer
+      //   if (isTransferInProgress) {
+      //     // if this was a marked source, unmark it
+      //     if (bindDeckCardsByYX[`${y}-${x}`].isSelectedForDrag) {
+      //       bindDeckCardsByYX[`${y}-${x}`].isSelectedForDrag =
+      //         !bindDeckCardsByYX[`${y}-${x}`].isSelectedForDrag;
+      //       isTransferInProgress = false;
+      //     } else {
+      //       // decided to transfer; check if source can go to destination
+      //       destination = bindDeckCardsByYX[`${y}-${x}`];
+
+      //       // a.s. check if destination card is the last one
+      //       //
+      //       // a.s. check if source can go to destination
+      //       isTransferOk = true;
+
+      //       if (isTransferOk) {
+      //         console.log('transfer ok', {
+      //           source,
+      //           sx: source.x,
+      //           sy: source.y,
+      //           dx: destination.x,
+      //           dy: destination.y,
+      //           deck1,
+      //         });
+
+      //         // a.s. just testing some concepts
+      //         // most likely need separate arrays for each column
+      //         // const sourceCard = deck1[source.y][source.x];
+      //         const sourceCard = deck1[source.x][source.y];
+      //         let sourceCards = [];
+
+      //         for (let index = 0; index < deck1[source.x].length; index++) {
+      //           if (deck1[source.x][source.y + index]) {
+      //             console.log(
+      //               'ready to insert',
+      //               deck1[source.x][source.y + index],
+      //             );
+      //             sourceCards.push(deck1[source.x][source.y + index]);
+      //           }
+      //         }
+
+      //         console.log({
+      //           attentioN: 'only this sourceCard',
+      //           sourceCard,
+      //           deck1,
+      //           sourcey: source.y,
+      //           sourcex: source.x,
+      //           sourceCards,
+      //         });
+
+      //         console.log('1', deck1[source.x].length, {
+      //           c1: deck1[source.x],
+      //         });
+
+      //         // a.s. delete card(s) from the source column
+      //         deck1[source.x].splice(
+      //           source.y,
+      //           1 + deck1[source.x].length - source.y,
+      //         );
+
+      //         // a.s. add card(s) to the destination column
+      //         deck1[destination.x].splice(destination.y + 1, 0, ...sourceCards);
+
+      //         // a.s. refresh the deck1
+      //         deck1 = deck1;
+
+      //         // clear source and destination
+      //         isTransferInProgress = false;
+      //       } else {
+      //         // transfer not ok
+      //         console.log('transfer not ok');
+      //       }
+      //     }
+      //   } else {
+      //     bindDeckCardsByYX[`${y}-${x}`].isSelectedForDrag =
+      //       !bindDeckCardsByYX[`${y}-${x}`].isSelectedForDrag;
+      //     isTransferInProgress = true;
+      //     source = bindDeckCardsByYX[`${y}-${x}`];
+      //   }
+      //   break;
       // a.s. mark to send to the top
       case 'x':
       case 'X':
