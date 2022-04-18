@@ -18,8 +18,6 @@ export function checkForTopTransfer(params) {
     'K',
   ];
 
-  console.log({ letters, currentCard, top4columns });
-
   if (currentCard.letter === 'A') {
     top4columns.push([]);
     return { isMoveAllowed: true, columnIndex: null };
@@ -28,14 +26,9 @@ export function checkForTopTransfer(params) {
   let matchingLetterIndex = letters.indexOf(currentCard.letter);
 
   for (const [index, column] of top4columns.entries()) {
-    console.log({ column, cLength: column.length });
     if (column.length > 0) {
       if (column[column.length - 1].symbol === currentCard.symbol) {
         console.log('symbols are matching');
-        console.log({
-          letInd: letters.indexOf(column[column.length - 1].letter) + 1,
-          matchingLetterIndex,
-        });
 
         if (
           letters.indexOf(column[column.length - 1].letter) + 1 ===

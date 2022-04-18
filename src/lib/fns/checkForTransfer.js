@@ -91,11 +91,6 @@ export function checkForTransfer(params) {
  */
 function checkNumbers(params) {
   const { intSrcLetter, intDestLetter, dLetter } = params;
-  // a.s. actually we can move from 2 to 3 even if the symobls are not the same
-  // but when we get to multiples it will be important
-  // if (sSymbol !== dSymbol) {
-  //   return false;
-  // }
 
   if (intSrcLetter === intDestLetter) {
     return false;

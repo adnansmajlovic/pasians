@@ -67,13 +67,13 @@
       if (selectedCard) selectedCard.isMarked = true;
     }
 
-    console.log({ key, keyCode });
     x = (selectedCard && selectedCard.x) || 0;
     y = (selectedCard && selectedCard.y) || 0;
     let thisY;
 
     switch (key) {
       case 'ArrowUp':
+        // console.log('up', { y, x, deck1Y: deck1[x]?.length });
         if (y > minY) {
           if (bindDeckCardsByYX[`${y}-${x}`])
             bindDeckCardsByYX[`${y}-${x}`].isMarked = false;
@@ -84,7 +84,7 @@
         }
         break;
       case 'ArrowDown':
-        console.log('down', { y, x, deck1Y: deck1[x]?.length });
+        // console.log('down', { y, x, deck1Y: deck1[x]?.length });
         if (y < deck1[x].length - 1) {
           if (bindDeckCardsByYX[`${y}-${x}`])
             bindDeckCardsByYX[`${y}-${x}`].isMarked = false;
@@ -95,12 +95,11 @@
         }
         break;
       case 'ArrowLeft':
-        console.log('left', {
-          y,
-          x,
-          dLength: deck1[x]?.length,
-          next: deck1[x - 1],
-        });
+        // console.log('left', {
+        //   y,
+        //   x,
+        //   dLength: deck1[x]?.length,
+        // });
 
         if (x > minX) {
           // if the first column is empty, stay where you are
@@ -136,12 +135,11 @@
         }
         break;
       case 'ArrowRight':
-        console.log('right', {
-          y,
-          x,
-          dLength: deck1[x]?.length,
-          next: deck1[x + 1],
-        });
+        // console.log('right', {
+        //   y,
+        //   x,
+        //   dLength: deck1[x]?.length,
+        // });
 
         if (x < maxX) {
           // if the last column is empty, stay where you are
@@ -195,7 +193,7 @@
             // a.s. check if destination card is the last one
             //
             if (destination.y !== deck1[destination.x].length - 1) {
-              console.log('destination is not the last card in a column');
+              console.log('the destination is not the last card in a column');
               // isTransferOk = false;
             } else {
               // a.s. check if source can go to destination
@@ -224,26 +222,9 @@
 
               for (let index = 0; index < deck1[source.x].length; index++) {
                 if (deck1[source.x][source.y + index]) {
-                  console.log(
-                    'ready to insert',
-                    deck1[source.x][source.y + index],
-                  );
                   sourceCards.push(deck1[source.x][source.y + index]);
                 }
               }
-
-              console.log({
-                attentioN: 'only this sourceCard',
-                sourceCard,
-                deck1,
-                sourcey: source.y,
-                sourcex: source.x,
-                sourceCards,
-              });
-
-              console.log('1', deck1[source.x].length, {
-                c1: deck1[source.x],
-              });
 
               // a.s. delete card(s) from the source column
               deck1[source.x].splice(
@@ -368,13 +349,13 @@
         // a column. Otherwise, move King to the top if possible.
         if (deck1[x][y].letter === 'K' && deck1[x].length > 1) {
           for (const [index, column] of deck1.entries()) {
-            console.log({ column, index, cLength: column.length, x, y });
+            // console.log({ column, index, cLength: column.length, x, y });
             if (column.length === 0) {
               console.log('empty column');
               // a.s. delete card(s) from the source column
               const sourceCards = deck1[x].splice(y, 1 + deck1[x].length - y);
 
-              console.log({ sourceCards, cLength: column.length });
+              // console.log({ sourceCards, cLength: column.length });
               // a.s. add card(s) to the destination column
               deck1[index].splice(column.length, 0, ...sourceCards);
               selectedCard = null;
@@ -398,14 +379,10 @@
             const letter = deck1[x][y].letter;
             const symbol = deck1[x][y].symbol;
 
-            // TODO: need a matching index of the column
             const x1 =
               letter === 'A' ? top4columns.length - 1 : columnIndex || 0;
             const y1 = top4columns[x1].length + 1;
 
-            // a.s. delete card(s) from the source column
-            console.log({ selectedCard, dk: deck1[x] });
-            console.log(deck1[x][y]);
             // a.s. add card(s) to the top column
             top4columns[x1].splice(y1, 0, deck1[x][y]);
             top4columns = top4columns;
@@ -451,11 +428,9 @@
   // shuffle
   arr.sort(() => Math.random() - 0.5);
 
-  // const restOfCards = arr.slice(10);
   const restOfCards = arr;
 
   // shuffle
-  // top4columns.sort(() => Math.random() - 0.5);
   restOfCards.sort(() => Math.random() - 0.5);
 
   let restOfCards1 = [...restOfCards];
@@ -491,7 +466,7 @@
 </svelte:head>
 
 <h1 class="text-3xl font-semibold items-center text-center m-2 text-[#209CEE]">
-  Pasians - Solitaire Online (v 80's ⍺)
+  Pasians - Solitaire Online (v 80's β)
 </h1>
 
 <div style="text-align: center">
@@ -499,8 +474,8 @@
     <p>Focus this window and use arrow keys [← ↑ → ↓] to play</p>
     <p>[Space] to mark/unmark the card for a move and drop!</p>
     <p>
-      [X] to send the card to the Top row (has to start w/ A), as well as a King
-      to an empty column
+      [X] to send the card to the Top row (starting w/ A), as well as moving a
+      King to an empty column
     </p>
   {/if}
 </div>
