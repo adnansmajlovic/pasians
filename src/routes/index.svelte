@@ -1,12 +1,11 @@
 <script>
-  import { onMount, tick } from 'svelte';
+  import { onMount } from 'svelte';
 
   import Card from '../lib/components/Card.svelte';
   import { checkForTransfer } from '$lib/fns/checkForTransfer';
   import { checkForTopTransfer } from '$lib/fns/checkForTopTransfer';
 
   let key;
-  let keyCode;
   let selectedCard;
 
   const minX = 0;
@@ -46,6 +45,10 @@
   let deck1 = [];
   let top4columns = [];
 
+  function shuffle(array) {
+    array.sort(() => Math.random() - 0.5);
+  }
+
   /**
    * a.s. Movement
    *
@@ -53,17 +56,10 @@
    */
   function handleKeydown(event) {
     key = event.key;
-    keyCode = event.keyCode;
 
     if (!selectedCard) {
-      // a.s. this logic here is weak, and causing the problem with
-      // the cards not being selected after the previous one was
-      // sent to the top...
-      // TODO fix this
-      // selectedCard = bindDeckCardsByYX['0-0'];
       // a.s. this is a bit better, handle when a column is empty
       selectedCard = bindDeckCardsByYX[`${deck1[x].length - 1}-${x}`];
-
       if (selectedCard) selectedCard.isMarked = true;
     }
 
@@ -73,7 +69,6 @@
 
     switch (key) {
       case 'ArrowUp':
-        // console.log('up', { y, x, deck1Y: deck1[x]?.length });
         if (y > minY) {
           if (bindDeckCardsByYX[`${y}-${x}`])
             bindDeckCardsByYX[`${y}-${x}`].isMarked = false;
@@ -84,7 +79,6 @@
         }
         break;
       case 'ArrowDown':
-        // console.log('down', { y, x, deck1Y: deck1[x]?.length });
         if (y < deck1[x].length - 1) {
           if (bindDeckCardsByYX[`${y}-${x}`])
             bindDeckCardsByYX[`${y}-${x}`].isMarked = false;
@@ -95,12 +89,6 @@
         }
         break;
       case 'ArrowLeft':
-        // console.log('left', {
-        //   y,
-        //   x,
-        //   dLength: deck1[x]?.length,
-        // });
-
         if (x > minX) {
           // if the first column is empty, stay where you are
           if (deck1[x - 1]?.length === 0 && x - 1 === minX) {
@@ -135,12 +123,6 @@
         }
         break;
       case 'ArrowRight':
-        // console.log('right', {
-        //   y,
-        //   x,
-        //   dLength: deck1[x]?.length,
-        // });
-
         if (x < maxX) {
           // if the last column is empty, stay where you are
           if (deck1[x + 1]?.length === 0 && x + 1 === maxX) {
@@ -349,13 +331,11 @@
         // a column. Otherwise, move King to the top if possible.
         if (deck1[x][y].letter === 'K' && deck1[x].length > 1) {
           for (const [index, column] of deck1.entries()) {
-            // console.log({ column, index, cLength: column.length, x, y });
             if (column.length === 0) {
               console.log('empty column');
               // a.s. delete card(s) from the source column
               const sourceCards = deck1[x].splice(y, 1 + deck1[x].length - y);
 
-              // console.log({ sourceCards, cLength: column.length });
               // a.s. add card(s) to the destination column
               deck1[index].splice(column.length, 0, ...sourceCards);
               selectedCard = null;
@@ -412,8 +392,8 @@
   }
 
   // shuffle
-  letters.sort(() => Math.random() - 0.5);
-  symbols.sort(() => Math.random() - 0.5);
+  shuffle(letters);
+  shuffle(symbols);
 
   for (const letter of letters) {
     for (const symbol of symbols) {
@@ -426,28 +406,21 @@
   }
 
   // shuffle
-  arr.sort(() => Math.random() - 0.5);
-
-  const restOfCards = arr;
-
-  // shuffle
-  restOfCards.sort(() => Math.random() - 0.5);
-
-  let restOfCards1 = [...restOfCards];
+  shuffle(arr);
 
   for (let x = 0; x < 8; x++) {
     deck1[x] = [];
     for (let y = 0; y < 6; y++) {
-      if (restOfCards1.length > 0) {
-        deck1[x][y] = restOfCards1.pop();
+      if (arr.length > 0) {
+        deck1[x][y] = arr.pop();
       }
     }
   }
 
   for (let x = 0; x < 4; x++) {
     for (let y = 6; y < 7; y++) {
-      if (restOfCards1.length > 0) {
-        deck1[x][y] = restOfCards1.pop();
+      if (arr.length > 0) {
+        deck1[x][y] = arr.pop();
       }
     }
   }
