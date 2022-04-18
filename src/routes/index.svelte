@@ -364,8 +364,9 @@
           break;
         }
 
-        // a.s. move King to an empty column
-        if (deck1[x][y].letter === 'K') {
+        // a.s. move King to an empty column, but only if there are more cards in
+        // a column. Otherwise, move King to the top if possible.
+        if (deck1[x][y].letter === 'K' && deck1[x].length > 1) {
           for (const [index, column] of deck1.entries()) {
             console.log({ column, index, cLength: column.length, x, y });
             if (column.length === 0) {
