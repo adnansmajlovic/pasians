@@ -554,6 +554,6 @@
 <footer>
   <div class="mt-10 bottom-0 bg-blue-400 text-center">
     Author: Adnan Smajlovic ⓒ originally created with Borland Turbo C, ~1987 in
-    Sarajevo / re-written in SvelteKit, during a weekend, Apr 2022 😁
+    Sarajevo / re-written in SvelteKit, during a long weekend, Apr 2022 😁
   </div>
 </footer>
