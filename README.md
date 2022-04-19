@@ -2,6 +2,10 @@
 
 Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 
+## Play Online
+
+[Pasians - Solitaire Play Online](https://pasians.vercel.app/)
+
 ## Creating a project
 
 If you're seeing this, you've probably already done this step. Congrats!
