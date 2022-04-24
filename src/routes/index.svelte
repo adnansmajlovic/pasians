@@ -238,6 +238,11 @@
       // a.s. mark to send to the top
       case 'x':
       case 'X':
+        // clear source and destination
+        // a.s. edge case when we marked a card for a move, and then
+        // instead used 'x' to move the card to the top
+        isTransferInProgress = false;
+
         if (deck1[x][y].letter !== 'K' && y !== deck1[x].length - 1) {
           console.log('has to be the last card in a column');
           break;
@@ -434,6 +439,7 @@
 <footer>
   <div class="mt-10 bottom-0 bg-blue-400 text-center">
     Author: Adnan Smajlovic ⓒ originally created with Borland Turbo C, ~1987 in
-    Sarajevo / re-written in SvelteKit, during a long weekend, Apr 2022 😁
+    Sarajevo / re-written in SvelteKit, during the long weekend in Apr 2022 😁
+    v0.1
   </div>
 </footer>
