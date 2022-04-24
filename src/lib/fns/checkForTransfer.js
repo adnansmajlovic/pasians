@@ -35,11 +35,6 @@ export function checkForTransfer(params) {
   if (s.y < deckColumn.length - 1) {
     console.log('checkForTransfer multiple cards');
 
-    console.log('loop:', {
-      start: s.y,
-      length: deckColumn.length - 1,
-      deckColumn,
-    });
     // a.s. check if the next card is the same symbol
     const firstIndex = reversedLetters.indexOf(deckColumn[s.y].letter);
     for (let i = 0; i < deckColumn.length - s.y; i++) {
@@ -123,6 +118,12 @@ function checkLetters(params) {
   }
 
   if (sLetter === 'A' && dLetter === '2') {
+    return true;
+  }
+
+  // a.s. this is an override for the case where the user is trying to transfer
+  // multiple cards on top of the King to an empty column
+  if (sLetter === 'K' && dLetter === ' ') {
     return true;
   }
 

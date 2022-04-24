@@ -238,14 +238,29 @@
       // a.s. mark to send to the top
       case 'x':
       case 'X':
-        if (y !== deck1[x].length - 1) {
+        if (deck1[x][y].letter !== 'K' && y !== deck1[x].length - 1) {
           console.log('has to be the last card in a column');
           break;
         }
 
         // a.s. move King to an empty column, but only if there are more cards in
-        // a column. Otherwise, move King to the top if possible.
+        // the source column. Otherwise, move King to the top if possible.
         if (deck1[x][y].letter === 'K' && deck1[x].length > 1) {
+          // a.s. check if cards are in a proper order
+
+          // a.s. check if source can go to destination
+          // this handles moving King to an empty column
+          isTransferOk = checkForTransfer({
+            source: bindDeckCardsByYX[`${y}-${x}`],
+            destination: { letter: ' ', symbol: deck1[x][y].symbol },
+            deckColumn: deck1[x],
+          });
+
+          if (!isTransferOk) {
+            console.log('transfer not ok');
+            break;
+          }
+
           for (const [index, column] of deck1.entries()) {
             if (column.length === 0) {
               console.log('empty column');
@@ -323,6 +338,7 @@
 
   // shuffle
   shuffle(arr);
+  shuffle(arr); // double shuffle
 
   for (let x = 0; x < 8; x++) {
     deck1[x] = [];
