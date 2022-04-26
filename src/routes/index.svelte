@@ -372,7 +372,27 @@
 <svelte:head>
   <title>Pasians - Solitaire Online ♥ ♣ ♠ ♦ (v 80's β)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Pasians Solitaire Play Online ♥ ♣ ♠ ♦" />
+  <meta
+    name="description"
+    content="Pasians Solitaire Play Online ♥ ♣ ♠ ♦ by Adnan Smajlovic"
+  />
+  <meta property="og:title" content="Pasians Solitaire Play Online ♥ ♣ ♠ ♦" />
+  <meta
+    property="og:description"
+    content="Pasians Solitaire Play Online ♥ ♣ ♠ ♦ by Adnan Smajlovic"
+  />
+  <meta property="og:image" content="https://pasians.vercel.app/og-image.png" />
+  <meta property="og:url" content="https://pasians.vercel.app" />
+  <meta name="twitter:title" content="Pasians Solitaire Play Online ♥ ♣ ♠ ♦" />
+  <meta
+    name="twitter:description"
+    content="Pasians Solitaire Play Online ♥ ♣ ♠ ♦ by Adnan Smajlovic"
+  />
+  <meta name="twitter:url" content="https://your-website.com/og-image.png" />
+  <meta
+    name="twitter:card"
+    content="Original Pasians (Solitaire) from 1987 by Adnan Smajlovic"
+  />
   <html lang="en" />
 </svelte:head>
 
