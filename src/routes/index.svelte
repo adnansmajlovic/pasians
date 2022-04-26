@@ -370,8 +370,9 @@
 <svelte:window on:keydown={handleKeydown} />
 
 <svelte:head>
-  <title>Pasians - Solitaire Online ♥ ♣ ♠ ♦ (v 80's ⍺)</title>
-  <meta name="robots" content="all" />
+  <title>Pasians - Solitaire Online ♥ ♣ ♠ ♦ (v 80's β)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Pasians Solitaire Play Online ♥ ♣ ♠ ♦" />
   <html lang="en" />
 </svelte:head>
 
